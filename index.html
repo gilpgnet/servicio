@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Saludo con Servicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {font-family: sans-serif}
+    </style>
+  </head>
+  <body>
+    <h1>Saludo con Servicio</h1>
+    <form name="vista">
+      <p>
+        <input type="text" name="nombre1" placeholder="Nombre 1" accesskey="1">
+      </p>
+      <p>
+        <input type="text" name="nombre2" placeholder="Nombre 2" accesskey="2">
+      </p>
+      <p><output name="respuesta"></output></p>
+      <p><button type="submit">Saludar</button></p>
+    </form>
+    <script>
+      "use strict";
+      const vista = document.vista;
+      let respuesta;
+      document.vista.addEventListener("submit", saluda);
+      function saluda(evt) {
+        evt.preventDefault();
+        /* Crea un FormData que automáticamente recupera todos los datos
+         * capturados por los controles de la vista. */
+        const datos = new FormData(vista);
+        /* fetch("servicioSaludo.php", { method: "POST", body: datos })
+         * Se conecta al recurso "servicioSaludo.php" dentro del servidor,
+         * enviando los datos capturados con el método POST de http.
+         * Se obtiene una Promise, que ejecuta un proceso del cual se
+         * desconoce cuando termina: puede haber terminado, puede terminar
+         * en este momento o posteriormente.*/
+        fetch("servicioSaluda.php", { method: "POST", body: datos })
+          /* El método then declara una función que será invocada cuando
+           * la promise termine con éxito. El resultado devuelto por la
+           * promise se pasa a la función. */
+          .then(respuesta => {
+            /* Procesa la respuesta devuelta por la URL
+             * "servicioSaludo.php". En caso de éxito, la respuesta tiene
+             * un status entre 200 y 299 y "respuesta.ok" es true.
+             *
+             * "return respuesta.text()"
+             * Devuelve una promise que resuelve al texto de la respuesta,
+             * que se pasa como parámetro a la función del siguiente then.
+             */
+            if (respuesta.ok) {
+              /* Procesa la respuesta devuelta por la URL
+               * "servicioSaludo.php". En caso de éxito, la respuesta
+               * tiene un status entre 200 y 299 y "respuesta.ok" es true.
+               *
+               * "return respuesta.text()"
+               * Devuelve una promise que resuelve al texto de la
+               * respuesta, que se pasa como parámetro a la función del
+               * siguiente then. */
+              return respuesta.text();
+            } else {
+              /* En caso de error, statusText contiene una explicación (en
+               * inglés) del problema. */
+              throw new Error(respuesta.statusText);
+            }
+          })
+          /* Se declara otra función que se invoca cuando la función del
+           * then anterior termina correctamente. El valor devuelto por la
+           * función anterior, se pasa a esta función. En este caso se
+           * recibe el texto devuelto por el servicio. */
+          .then(texto => vista.respuesta.value = texto)
+          /* Si las funciones de alguno de los then termina con error, se
+           * aborta la ejecución y se ejecuta la función declarada en el
+           * catch. El parámetro recibido es el Error generado. */
+          .catch(e => vista.respuesta.value = e.message);
+      }
+    </script>
+  </body>
+</html>
