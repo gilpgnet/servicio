@@ -25,6 +25,14 @@
       const vista = document.vista;
       let respuesta;
       document.vista.addEventListener("submit", saluda);
+      /** Envía los nombes al servidor y muestra la respuesta.
+       * 
+       * La palabra async indica que devuelve una Promise. También permite que el código en
+       * su interior use la palabra await para esperar a que una Promise termine, haciendo
+       * más legible el código.
+       * 
+       * @param {Event} evt Descripción del evento que activa la forma.
+       * @returns {Promise<Void>} promise que indica cuando el proceso realizado ha terminado. */
       async function saluda(evt) {
         evt.preventDefault();
         /* Crea un FormData que automáticamente recupera todos los datos
@@ -43,7 +51,7 @@
            * Obliga a esperar que la promise termine y devuelve el
            * resultado del fetch. */
           const respuestaHttp = await
-            fetch("servicioSaluda.php", { method: "POST", body: datos });
+            fetch("servicioSaluda.php?XDEBUG_SESSION_START=name", { method: "POST", body: datos });
           /* Procesa la respuesta devuelta por la URL
            * "servicioSaludo.php". En caso de éxito, respuestaHttp tiene
            * un status entre 200 y 299 y "respuesta.ok" es true. */
